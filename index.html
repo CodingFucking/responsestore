@@ -587,26 +587,24 @@
 
                 <div class="color-picker" id="colorPicker"></div>
 
-                <form id="preorderForm">
+                <form id="preorderForm" action="https://formspree.io/f/xvznnoew" method="POST">
+                    <input type="hidden" name="_subject" value="Новый предзаказ!" />
                     <div class="form-group">
                         <label for="customerName">Ваше имя</label>
-                        <input type="text" id="customerName" placeholder="Алексей" required />
+                        <input type="text" id="customerName" name="name" placeholder="Алексей" required />
                     </div>
                     <div class="form-group">
                         <label for="customerContact">Телефон / Telegram</label>
-                        <input type="text" id="customerContact" placeholder="@telegram или +7" required />
+                        <input type="text" id="customerContact" name="contact" placeholder="@telegram или +7" required />
                     </div>
                     <div class="form-group">
-                        <label for="customerColor">Цвет (выберите выше)</label>
-                        <input type="text" id="customerColor" placeholder="например, голубой" required />
-                    </div>
-                    <div class="modal-footnote">
-                        <i>▸</i> предзаказ без обязательств, мы свяжемся для подтверждения
+                        <label for="customerColor">Цвет</label>
+                        <input type="text" id="customerColor" name="color" placeholder="например, голубой" required />
                     </div>
                     <button type="submit" class="submit-btn">📨 отправить предзаказ</button>
                 </form>
                 <div style="margin-top: 12px; font-size: 13px; color: #77778a; text-align: center; border-top: 1px solid #d8d8e2; padding-top: 14px;">
-                    <span>🔥 цена фиксирована, доставка оплачивается отдельно</span>
+                    <span>доставка оплачивается отдельно</span>
                 </div>
             </div>
         </div>
