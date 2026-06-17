@@ -587,7 +587,7 @@
 
                 <div class="color-picker" id="colorPicker"></div>
 
-                <!-- ✅ ФОРМА РАБОТАЕТ ЧЕРЕЗ FORMSPREE! -->
+                <!-- ✅ ФОРМА ОТПРАВЛЯЕТ НА FORMSPREE -->
                 <form id="preorderForm" action="https://formspree.io/f/xvznnoew" method="POST">
                     <input type="hidden" name="_subject" value="Новый предзаказ из Response Store!" />
                     <div class="form-group">
@@ -664,9 +664,6 @@
             const modalMainImage = document.getElementById('modalMainImage');
             const colorPicker = document.getElementById('colorPicker');
             const colorImagePreview = document.getElementById('colorImagePreview');
-            const form = document.getElementById('preorderForm');
-            const nameInput = document.getElementById('customerName');
-            const contactInput = document.getElementById('customerContact');
             const colorInput = document.getElementById('customerColor');
             const productNameHidden = document.getElementById('productNameHidden');
 
@@ -730,7 +727,7 @@
                 modalTitle.textContent = product.name;
                 updateModalContent(product);
 
-                // Заполняем скрытое поле с названием товара
+                // ✅ Заполняем скрытое поле с названием товара
                 productNameHidden.value = product.name;
 
                 modal.classList.add('active');
@@ -803,8 +800,6 @@
                 });
 
                 colorInput.value = color;
-                nameInput.value = '';
-                contactInput.value = '';
             }
 
             function closeModal() {
@@ -826,7 +821,7 @@
                     closeModal();
                 }
             });
-
+            
             renderProducts();
         })();
     </script>
