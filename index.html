@@ -587,24 +587,26 @@
 
                 <div class="color-picker" id="colorPicker"></div>
 
+                <!-- ✅ ФОРМА РАБОТАЕТ ЧЕРЕЗ FORMSPREE! -->
                 <form id="preorderForm" action="https://formspree.io/f/xvznnoew" method="POST">
-                    <input type="hidden" name="_subject" value="Новый предзаказ!" />
+                    <input type="hidden" name="_subject" value="Новый предзаказ из Response Store!" />
                     <div class="form-group">
                         <label for="customerName">Ваше имя</label>
-                        <input type="text" id="customerName" name="name" placeholder="Алексей" required />
+                        <input type="text" id="customerName" name="Имя" placeholder="Алексей" required />
                     </div>
                     <div class="form-group">
                         <label for="customerContact">Телефон / Telegram</label>
-                        <input type="text" id="customerContact" name="contact" placeholder="@telegram или +7" required />
+                        <input type="text" id="customerContact" name="Контакт" placeholder="@telegram или +7" required />
                     </div>
                     <div class="form-group">
                         <label for="customerColor">Цвет</label>
-                        <input type="text" id="customerColor" name="color" placeholder="например, голубой" required />
+                        <input type="text" id="customerColor" name="Цвет" placeholder="например, голубой" required />
                     </div>
+                    <input type="hidden" name="Товар" id="productNameHidden" value="" />
                     <button type="submit" class="submit-btn">📨 отправить предзаказ</button>
                 </form>
                 <div style="margin-top: 12px; font-size: 13px; color: #77778a; text-align: center; border-top: 1px solid #d8d8e2; padding-top: 14px;">
-                    <span>доставка оплачивается отдельно</span>
+                    <span>🔥 доставка оплачивается отдельно</span>
                 </div>
             </div>
         </div>
@@ -654,11 +656,6 @@
                 'оранжевый': '#e67e22'
             };
 
-            // === НАСТРОЙКИ ДЛЯ GITHUB ISSUES ===
-            // ВАЖНО: замените на свои данные!
-            const GITHUB_USER = 'CodingFucking';
-            const GITHUB_REPO = 'responsestore';
-
             const grid = document.getElementById('productGrid');
             const modal = document.getElementById('preorderModal');
             const closeBtn = document.getElementById('modalCloseBtn');
@@ -671,6 +668,7 @@
             const nameInput = document.getElementById('customerName');
             const contactInput = document.getElementById('customerContact');
             const colorInput = document.getElementById('customerColor');
+            const productNameHidden = document.getElementById('productNameHidden');
 
             let selectedProduct = null;
             let selectedColor = '';
@@ -731,6 +729,9 @@
 
                 modalTitle.textContent = product.name;
                 updateModalContent(product);
+
+                // Заполняем скрытое поле с названием товара
+                productNameHidden.value = product.name;
 
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -806,48 +807,6 @@
                 contactInput.value = '';
             }
 
-            // === ФУНКЦИЯ ОТПРАВКИ В GITHUB ISSUES ===
-            async function sendOrderToGitHub(name, contact, product, color) {
-                const issueTitle = `${product} - ${color}`;
-                const issueBody = `
-                    **🆕 Новый предзаказ!**
-                    
-                    **📦 Товар:** ${product}
-                    **🎨 Цвет:** ${color}
-                    **👤 Имя:** ${name}
-                    **📱 Контакт:** ${contact}
-                    
-                    _Заказ создан через сайт response store_
-                `;
-
-                try {
-                    // ОТПРАВКА БЕЗ ТОКЕНА! 
-                    // Для публичных репозиториев это работает!
-                    const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/issues`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            title: issueTitle,
-                            body: issueBody,
-                            labels: ['заказ', 'предзаказ']
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Ошибка при создании Issue');
-                    }
-
-                    const data = await response.json();
-                    return { success: true, issueUrl: data.html_url };
-                } catch (error) {
-                    console.error('Ошибка:', error);
-                    return { success: false, error: error.message };
-                }
-            }
-
             function closeModal() {
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
@@ -865,53 +824,6 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && modal.classList.contains('active')) {
                     closeModal();
-                }
-            });
-
-            // === ОБРАБОТЧИК ФОРМЫ ===
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                const name = nameInput.value.trim();
-                const contact = contactInput.value.trim();
-                const color = colorInput.value.trim();
-
-                if (!name || !contact || !color) {
-                    alert('Пожалуйста, заполните все поля (имя, контакт, цвет)');
-                    return;
-                }
-
-                const productName = selectedProduct ? selectedProduct.name : 'йойо';
-
-                // Показываем индикатор загрузки
-                const submitBtn = form.querySelector('.submit-btn');
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = '⏳ Отправка...';
-                submitBtn.disabled = true;
-
-                try {
-                    const result = await sendOrderToGitHub(name, contact, productName, color);
-
-                    if (result.success) {
-                        alert(
-                            `✅ Спасибо, ${name}! Ваш предзаказ на ${productName} (цвет: ${color}) принят.\n\n` +
-                            `Мы свяжемся с вами в ближайшее время.\n` +
-                            `(доставка не включена в стоимость)\n\n` +
-                            `📋 Номер заказа: #${result.issueUrl.split('/').pop()}`
-                        );
-                        form.reset();
-                        closeModal();
-                    } else {
-                        alert(
-                            `❌ Произошла ошибка при отправке заказа:\n${result.error}\n\n` +
-                            `Пожалуйста, попробуйте ещё раз или свяжитесь с нами напрямую.`
-                        );
-                    }
-                } catch (error) {
-                    alert(`❌ Ошибка: ${error.message}`);
-                } finally {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
                 }
             });
 
