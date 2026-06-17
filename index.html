@@ -727,7 +727,6 @@
                 modalTitle.textContent = product.name;
                 updateModalContent(product);
 
-                // ✅ Заполняем скрытое поле с названием товара
                 productNameHidden.value = product.name;
 
                 modal.classList.add('active');
@@ -821,7 +820,7 @@
                     closeModal();
                 }
             });
-            
+
             renderProducts();
         })();
     </script>
