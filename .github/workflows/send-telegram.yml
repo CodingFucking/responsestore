@@ -1,0 +1,21 @@
+name: Send Order to Telegram
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send order to Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            🆕 НОВЫЙ ПРЕДЗАКАЗ!
+            
+            📦 Товар: ${{ github.event.issue.title }}
+            📝 Детали: ${{ github.event.issue.body }}
+            🔗 Ссылка: ${{ github.event.issue.html_url }}
